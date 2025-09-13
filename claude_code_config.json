@@ -1,16 +1,5 @@
 {
   "mcpServers": {
-    "gemini-executor": {
-      "command": "/opt/homebrew/bin/node",
-      "args": ["/Users/btankut/Projects/Lexical-TUI-Claude/src/mcp-servers/gemini-executor-server.js"],
-      "cwd": "/Users/btankut/Projects/Lexical-TUI-Claude",
-      "env": {
-        "GEMINI_API_KEY": "${GEMINI_API_KEY}",
-        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
-        "LOG_LEVEL": "info",
-        "PATH": "/opt/homebrew/bin:${PATH}"
-      }
-    },
     "lexical-universal": {
       "command": "/opt/homebrew/bin/node",
       "args": ["/Users/btankut/Projects/Lexical-TUI-Claude/src/mcp-servers/universal-mcp-server.js"],

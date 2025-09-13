@@ -136,6 +136,7 @@ class GeminiChatManager {
   async saveSession() {
     try {
       logger.info(`Saving chat session: ${this.sessionName}`);
+      await this.executeGeminiCommand(`/chat save ${this.sessionName}`);
       this.sessionManager.saveSession();
       return true;
     } catch (error) {

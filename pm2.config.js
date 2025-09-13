@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
-    name: 'gemini-executor-mcp',
-    script: './src/mcp-servers/gemini-executor-server.js',
+    name: 'lexical-universal-mcp',
+    script: './src/mcp-servers/universal-mcp-server.js',
     instances: 1,
     autorestart: true,
     watch: false,

@@ -520,8 +520,659 @@
         },
         "duration": 3553
       }
+    },
+    {
+      "timestamp": "2025-09-13T22:57:22.393Z",
+      "type": "tool_call",
+      "toolName": "list_agents",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:57:22.394Z",
+      "type": "tool_result",
+      "toolName": "list_agents",
+      "result": {
+        "agents": [
+          {
+            "name": "claude",
+            "capabilities": [
+              "plan",
+              "execute",
+              "review"
+            ]
+          },
+          {
+            "name": "gemini",
+            "capabilities": [
+              "execute"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:57:35.164Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "What is 2+2?"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:57:40.049Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "4",
+        "taskId": "task_1757804260049"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:59:18.112Z",
+      "type": "tool_call",
+      "toolName": "list_agents",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:59:18.112Z",
+      "type": "tool_result",
+      "toolName": "list_agents",
+      "result": {
+        "agents": [
+          {
+            "name": "claude",
+            "capabilities": [
+              "plan",
+              "execute",
+              "review"
+            ]
+          },
+          {
+            "name": "gemini",
+            "capabilities": [
+              "execute"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:59:29.724Z",
+      "type": "tool_call",
+      "toolName": "list_workflows",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:59:29.724Z",
+      "type": "tool_result",
+      "toolName": "list_workflows",
+      "result": {
+        "workflows": [
+          {
+            "name": "plan-execute",
+            "description": "Plan with one agent, execute with another."
+          },
+          {
+            "name": "direct",
+            "description": "Direct execution of a task."
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:00:08.866Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a simple Python function that adds two numbers"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:00:19.955Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": true,
+        "code": "I've created a file named `add.py` with the Python function. Would you like me to run it?",
+        "message": "Code generated successfully with Gemini"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:00:32.654Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "What is the capital of Japan?",
+          "id": "test_123"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:00:47.707Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "Tokyo is the capital of Japan.",
+        "taskId": "test_123"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:01:00.156Z",
+      "type": "tool_call",
+      "toolName": "save_chat_session",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T23:01:00.157Z",
+      "type": "tool_result",
+      "toolName": "save_chat_session",
+      "result": true
+    },
+    {
+      "timestamp": "2025-09-13T23:01:11.508Z",
+      "type": "tool_call",
+      "toolName": "resume_chat_session",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T23:01:21.482Z",
+      "type": "tool_result",
+      "toolName": "resume_chat_session",
+      "result": true
+    },
+    {
+      "timestamp": "2025-09-13T23:01:34.608Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "Calculate 15 * 4",
+        "preferences": {
+          "agent": "gemini",
+          "workflow": "direct"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:01:40.179Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": false,
+        "error": "Gemini command failed: "
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:01:53.320Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_workflow",
+      "arguments": {
+        "workflow": "direct",
+        "input": "What is 20 divided by 4?"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:01:56.814Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_workflow",
+      "result": {
+        "success": true,
+        "workflow": "direct",
+        "result": {
+          "id": "cd8742c7-6fc0-4915-89e3-5c79409c4b52",
+          "workflow": "direct",
+          "startTime": 1757804513320,
+          "input": "What is 20 divided by 4?",
+          "context": {
+            "0": "5"
+          },
+          "steps": [
+            {
+              "name": "Execute Task",
+              "status": "success",
+              "agent": "auto",
+              "duration": 3494,
+              "output": "5"
+            }
+          ],
+          "status": "completed",
+          "endTime": 1757804516814,
+          "duration": 3494
+        },
+        "duration": 3494
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:02:11.756Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_parallel",
+      "arguments": {
+        "prompt": "Name a planet in our solar system",
+        "agents": [
+          "gemini"
+        ],
+        "mode": "all"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:02:16.365Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_parallel",
+      "result": {
+        "success": true,
+        "mode": "all",
+        "agents": [
+          "gemini"
+        ],
+        "results": [
+          "Mars"
+        ],
+        "totalResults": 1
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:02:29.274Z",
+      "type": "tool_call",
+      "toolName": "get_capabilities",
+      "arguments": {
+        "task": "Write JavaScript code",
+        "requirements": {
+          "language": "javascript",
+          "complexity": "medium"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:02:29.275Z",
+      "type": "tool_result",
+      "toolName": "get_capabilities",
+      "result": {
+        "task": "Write JavaScript code",
+        "requirements": {
+          "language": "javascript",
+          "complexity": "medium"
+        },
+        "recommendations": [
+          {
+            "agent": "claude",
+            "score": 5,
+            "reasons": [
+              "Supports javascript"
+            ],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.95,
+              "execution": 0.85,
+              "review": 0.9,
+              "contextWindow": 200000,
+              "languages": [
+                "python",
+                "javascript",
+                "go"
+              ]
+            }
+          },
+          {
+            "agent": "gemini",
+            "score": 5,
+            "reasons": [
+              "Supports javascript"
+            ],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.85,
+              "execution": 0.95,
+              "review": 0.8,
+              "contextWindow": 1000000,
+              "languages": [
+                "python",
+                "javascript",
+                "java"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:02:42.799Z",
+      "type": "tool_call",
+      "toolName": "get_process_stats",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T23:02:42.800Z",
+      "type": "tool_result",
+      "toolName": "get_process_stats",
+      "result": {
+        "monitoring": {
+          "active": true,
+          "checkInterval": "10 seconds",
+          "maxCpuThreshold": "50%",
+          "maxProcessAge": "5 minutes"
+        },
+        "processes": [],
+        "summary": {
+          "totalActiveProcesses": 0,
+          "systemHealth": "good",
+          "lastCheck": "2025-09-13T23:02:42.800Z"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:07.884Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "Write a simple Python function that calculates factorial"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:25.457Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": true,
+        "result": "I've created a Python file named `factorial.py` with a function to calculate the factorial of a number. I also included an example of how to use it.",
+        "agent": "gemini",
+        "workflow": "direct"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:33.341Z",
+      "type": "tool_call",
+      "toolName": "list_workflows",
+      "arguments": {
+        "dummy": ""
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:33.341Z",
+      "type": "tool_result",
+      "toolName": "list_workflows",
+      "result": {
+        "workflows": [
+          {
+            "name": "plan-execute",
+            "description": "Plan with one agent, execute with another."
+          },
+          {
+            "name": "direct",
+            "description": "Direct execution of a task."
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:35.813Z",
+      "type": "tool_call",
+      "toolName": "list_agents",
+      "arguments": {
+        "dummy": ""
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:35.814Z",
+      "type": "tool_result",
+      "toolName": "list_agents",
+      "result": {
+        "agents": [
+          {
+            "name": "claude",
+            "capabilities": [
+              "plan",
+              "execute",
+              "review"
+            ]
+          },
+          {
+            "name": "gemini",
+            "capabilities": [
+              "execute"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:38.695Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "print('Testing execute_code tool')"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:09:58.541Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": true,
+        "code": "I can do that. I'll use the `add_numbers.py` file to test code execution. First, I'll read the file to see what it does.",
+        "message": "Code generated successfully with Gemini"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:01.995Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "What is 2+2?"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:16.425Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "4",
+        "taskId": "task_1757805016425"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:19.337Z",
+      "type": "tool_call",
+      "toolName": "save_chat_session",
+      "arguments": {
+        "dummy": ""
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:23.628Z",
+      "type": "tool_result",
+      "toolName": "save_chat_session",
+      "result": true
+    },
+    {
+      "timestamp": "2025-09-13T23:10:26.469Z",
+      "type": "tool_call",
+      "toolName": "resume_chat_session",
+      "arguments": {
+        "dummy": ""
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:32.000Z",
+      "type": "tool_result",
+      "toolName": "resume_chat_session",
+      "result": true
+    },
+    {
+      "timestamp": "2025-09-13T23:10:35.512Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_workflow",
+      "arguments": {
+        "workflow": "direct",
+        "input": "Calculate 10 * 5"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:39.163Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_workflow",
+      "result": {
+        "success": true,
+        "workflow": "direct",
+        "result": {
+          "id": "cf4bf9e0-843a-405d-a79d-d4a7c772d0bc",
+          "workflow": "direct",
+          "startTime": 1757805035513,
+          "input": "Calculate 10 * 5",
+          "context": {
+            "0": "5",
+            "1": "0"
+          },
+          "steps": [
+            {
+              "name": "Execute Task",
+              "status": "success",
+              "agent": "auto",
+              "duration": 3650,
+              "output": "50"
+            }
+          ],
+          "status": "completed",
+          "endTime": 1757805039163,
+          "duration": 3650
+        },
+        "duration": 3650
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:42.569Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_parallel",
+      "arguments": {
+        "prompt": "What is the capital of France?",
+        "agents": [
+          "gemini"
+        ],
+        "mode": "all"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:49.748Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_parallel",
+      "result": {
+        "success": true,
+        "mode": "all",
+        "agents": [
+          "gemini"
+        ],
+        "results": [
+          "Paris."
+        ],
+        "totalResults": 1
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:52.720Z",
+      "type": "tool_call",
+      "toolName": "get_capabilities",
+      "arguments": {
+        "task": "Write a Python script"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:52.721Z",
+      "type": "tool_result",
+      "toolName": "get_capabilities",
+      "result": {
+        "task": "Write a Python script",
+        "requirements": {},
+        "recommendations": [
+          {
+            "agent": "claude",
+            "score": 0,
+            "reasons": [],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.95,
+              "execution": 0.85,
+              "review": 0.9,
+              "contextWindow": 200000,
+              "languages": [
+                "python",
+                "javascript",
+                "go"
+              ]
+            }
+          },
+          {
+            "agent": "gemini",
+            "score": 0,
+            "reasons": [],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.85,
+              "execution": 0.95,
+              "review": 0.8,
+              "contextWindow": 1000000,
+              "languages": [
+                "python",
+                "javascript",
+                "java"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:55.468Z",
+      "type": "tool_call",
+      "toolName": "get_process_stats",
+      "arguments": {
+        "dummy": ""
+      }
+    },
+    {
+      "timestamp": "2025-09-13T23:10:55.469Z",
+      "type": "tool_result",
+      "toolName": "get_process_stats",
+      "result": {
+        "monitoring": {
+          "active": true,
+          "checkInterval": "10 seconds",
+          "maxCpuThreshold": "50%",
+          "maxProcessAge": "5 minutes"
+        },
+        "processes": [
+          {
+            "pid": 23506,
+            "name": "gemini-chat",
+            "ageSeconds": 96,
+            "warnings": 0
+          },
+          {
+            "pid": 23742,
+            "name": "gemini-chat",
+            "ageSeconds": 45,
+            "warnings": 0
+          },
+          {
+            "pid": 23771,
+            "name": "gemini-chat",
+            "ageSeconds": 36,
+            "warnings": 0
+          }
+        ],
+        "summary": {
+          "totalActiveProcesses": 3,
+          "systemHealth": "good",
+          "lastCheck": "2025-09-13T23:10:55.469Z"
+        }
+      }
     }
   ],
   "createdAt": "2025-09-13T22:38:38.000Z",
-  "updatedAt": "2025-09-13T22:49:02.432Z"
+  "updatedAt": "2025-09-13T23:10:55.469Z"
 }
