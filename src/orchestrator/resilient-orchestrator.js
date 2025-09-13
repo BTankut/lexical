@@ -1,7 +1,7 @@
-const { Orchestrator } = require('./orchestrator.js');
+const { LegacyOrchestrator } = require('./legacy-orchestrator.js');
 const { logger } = require('../utils/logger.js');
 
-class ResilientOrchestrator extends Orchestrator {
+class ResilientOrchestrator extends LegacyOrchestrator {
   constructor(config) {
     super(config);
     this.maxRetries = config.maxRetries || 3;

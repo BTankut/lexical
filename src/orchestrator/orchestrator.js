@@ -13,11 +13,7 @@ class Orchestrator {
     });
     this.cache.startCleanupInterval();
     this.metrics = getMetrics();
-    this.cli = new UniversalCLI({
-      name: this.executorType,
-      cache: this.cache,
-      metrics: this.metrics
-    });
+    this.cli = null; // Will be set by subclass or default
   }
 
   // No need for planner - Claude Code IS the planner

@@ -1,4 +1,5 @@
 const { v4: generateId } = require('uuid');
+const builtInWorkflows = require('../../config/workflows/built-in.js');
 
 class WorkflowEngine {
   constructor(orchestrator) {
@@ -8,9 +9,9 @@ class WorkflowEngine {
   }
 
   loadBuiltinWorkflows() {
-    // In a real application, you would load workflow definitions
-    // from a file or a database.
-    // For now, we'll leave this empty.
+    for (const [name, workflow] of Object.entries(builtInWorkflows)) {
+      this.workflows.set(name, workflow);
+    }
   }
 
   async execute(workflowName, input, initialContext = {}) {
@@ -50,6 +51,15 @@ class WorkflowEngine {
         if (stepResult.status === 'failed' && step.stopOnError) {
           execution.status = 'failed';
           break;
+        }
+
+        if (step.loop_to && stepResult.status !== 'failed') {
+          const loopToIndex = this.findStepIndex(workflow, step.loop_to);
+          const loopCount = execution.steps.filter(s => s.name === step.name).length;
+          if (!workflow.settings?.maxIterations || loopCount < workflow.settings.maxIterations) {
+            i = loopToIndex - 1; // loop back
+            continue;
+          }
         }
 
         // Navigate to next step based on result

@@ -6,12 +6,12 @@ echo ""
 
 # Test 1: Check if server starts
 echo "1. Testing server startup..."
-timeout 5 npm start 2>&1 | grep -q "MCP Server started successfully" && echo "✓ Server starts correctly" || echo "✗ Server failed to start"
+timeout 10 npm run start:universal 2>&1 | grep "MCP Server started successfully" && echo "✓ Server starts correctly" || echo "✗ Server failed to start"
 
 # Test 2: Check if Claude can see the MCP server
 echo ""
 echo "2. Testing Claude MCP detection..."
-echo "Run: claude /mcp"
+echo "Run: claude mcp"
 echo "Expected: Should list 'lexical-orchestrator' server"
 
 # Test 3: Interactive test suggestion

@@ -28,8 +28,15 @@ class MultiAgentOrchestrator extends Orchestrator {
     });
     this.agentRegistry.register('gemini', geminiCLI, geminiCLI.capabilities);
 
-    // Default to gemini if executorType is not specified
-    this.cli = this.agentRegistry.getAgent(this.executorType) || geminiCLI;
+    const universalCLI = new UniversalCLI({
+      name: 'universal',
+      cache: this.cache,
+      metrics: this.metrics,
+    });
+    this.agentRegistry.register('universal', universalCLI, universalCLI.capabilities);
+
+    // Default to universal if executorType is not specified
+    this.cli = this.agentRegistry.getAgent(this.executorType) || universalCLI;
   }
 
   async checkHealth() {
@@ -64,11 +71,63 @@ class MultiAgentOrchestrator extends Orchestrator {
   }
 
   async executeAuto(prompt, options = {}) {
-    // Simple strategy: use the default agent (from config)
-    // More complex logic can be added here to select the best agent dynamically
-    const agent = this.cli;
-    logger.info(`Executing with auto-selected agent: ${agent.name}`);
+    // Analyze requirements from prompt and options
+    const requirements = this.analyzeRequirements(prompt, options);
+
+    // Use registry to select best agent
+    const agent = this.agentRegistry.selectBestAgent(requirements);
+
+    if (!agent) {
+      // Fallback to default agent
+      logger.warn('No agent found via auto-selection, using default');
+      return this.cli.execute(prompt, options);
+    }
+
+    logger.info(`Executing with auto-selected agent: ${agent.name} (score-based)`);
     return agent.execute(prompt, options);
+  }
+
+  analyzeRequirements(prompt, options) {
+    const requirements = {
+      role: options.role || 'execute',
+      contextSize: prompt.length,
+      language: null,
+      complexity: 'medium'
+    };
+
+    // Detect programming language
+    const languagePatterns = {
+      python: /python|py\b|import |def |class /i,
+      javascript: /javascript|js\b|node|npm|const |let |var /i,
+      typescript: /typescript|ts\b|interface |type /i,
+      go: /golang|go\b|func |package /i,
+      java: /java\b|class |public static/i
+    };
+
+    for (const [lang, pattern] of Object.entries(languagePatterns)) {
+      if (pattern.test(prompt)) {
+        requirements.language = lang;
+        break;
+      }
+    }
+
+    // Detect complexity
+    if (prompt.match(/plan|design|architect|strategy/i)) {
+      requirements.role = 'plan';
+      requirements.complexity = 'high';
+    } else if (prompt.match(/review|improve|optimize|refactor/i)) {
+      requirements.role = 'review';
+      requirements.complexity = 'high';
+    } else if (prompt.match(/simple|basic|quick/i)) {
+      requirements.complexity = 'low';
+    }
+
+    // Large context indicates complex task
+    if (prompt.length > 1000) {
+      requirements.complexity = 'high';
+    }
+
+    return requirements;
   }
 
   // --- Backward Compatibility ---

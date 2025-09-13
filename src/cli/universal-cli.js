@@ -3,10 +3,12 @@ const { spawn } = require('child_process');
 const { preparePrompt } = require('./templates/prompts');
 const claudeConfig = require('./configs/claude');
 const geminiConfig = require('./configs/gemini');
+const universalConfig = require('./configs/universal');
 
 const CLI_CONFIGS = {
   claude: claudeConfig,
-  gemini: geminiConfig
+  gemini: geminiConfig,
+  universal: universalConfig
 };
 
 class UniversalCLI extends EventEmitter {

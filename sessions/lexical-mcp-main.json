@@ -1,1 +1,289 @@
-{}
+{
+  "sessionId": "lexical-mcp-main",
+  "operations": [
+    {
+      "timestamp": "2025-09-13T22:23:50.288Z",
+      "type": "tool_call",
+      "toolName": "list_agents",
+      "arguments": {
+        "task": "{\"prompt\": \"List all available agents\"}"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:23:50.288Z",
+      "type": "tool_result",
+      "toolName": "list_agents",
+      "result": {
+        "agents": [
+          {
+            "name": "claude",
+            "capabilities": [
+              "plan",
+              "execute",
+              "review"
+            ]
+          },
+          {
+            "name": "gemini",
+            "capabilities": [
+              "execute"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:23:58.988Z",
+      "type": "tool_call",
+      "toolName": "list_workflows",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:23:58.988Z",
+      "type": "tool_result",
+      "toolName": "list_workflows",
+      "result": {
+        "workflows": [
+          {
+            "name": "plan-execute",
+            "description": "Plan with one agent, execute with another."
+          },
+          {
+            "name": "direct",
+            "description": "Direct execution of a task."
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:10.279Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "Remember this test context: We are testing the Lexical Universal MCP Server. The test number is 42 and the secret word is 'LEXICAL'. Please confirm you received this context."
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:10.280Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "Orchestration complete"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:13.412Z",
+      "type": "tool_call",
+      "toolName": "save_chat_session",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:24:13.413Z",
+      "type": "tool_result",
+      "toolName": "save_chat_session",
+      "result": true
+    },
+    {
+      "timestamp": "2025-09-13T22:24:22.084Z",
+      "type": "tool_call",
+      "toolName": "resume_chat_session",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:24:22.561Z",
+      "type": "tool_result",
+      "toolName": "resume_chat_session",
+      "result": false
+    },
+    {
+      "timestamp": "2025-09-13T22:24:26.366Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "What was the test number and secret word I told you earlier?"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:26.367Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "Orchestration complete"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:36.582Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "Create a simple hello world function in Python and explain what it does",
+        "preferences": {
+          "agent": "gemini",
+          "workflow": "direct"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:36.582Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": true,
+        "result": "Orchestration complete"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:45.998Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a function that calculates fibonacci numbers up to n terms"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:24:45.999Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": true,
+        "result": "Orchestration complete"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:27:37.928Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a Python function that returns \"Hello from Gemini!\" when called"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:27:37.929Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": false,
+        "error": "this.geminiChatManager.chat is not a function"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:28:39.415Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a Python function that returns \"Hello from Gemini!\" when called"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:28:39.930Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": false,
+        "error": "Gemini command failed: "
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:30:13.940Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a Python function that returns \"Hello from Gemini!\" when called"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:30:19.718Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": true,
+        "code": "I've created a Python file named `hello_gemini.py` with a",
+        "message": "Code generated successfully with Gemini"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:36:28.215Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a Python function that returns \"Hello from Gemini!\" when called. Include a simple example of how to use it."
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:36:40.174Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": true,
+        "code": "I've created the Python function in `hello_gemini.py`. You can run it from your terminal to see the output.",
+        "message": "Code generated successfully with Gemini"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:39:05.085Z",
+      "type": "tool_call",
+      "toolName": "execute_code",
+      "arguments": {
+        "prompt": "Write a Python function called hello_gemini that returns \"Hello from Gemini!\" when called. Show the complete code."
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:39:24.535Z",
+      "type": "tool_result",
+      "toolName": "execute_code",
+      "result": {
+        "success": true,
+        "code": "I have created the Python function in `hello_gemini.py`.",
+        "message": "Code generated successfully with Gemini"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:39:39.424Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "Remember: My test name is TestUser123 and my favorite color is blue."
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:39:51.277Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "Okay, I've saved those facts.",
+        "taskId": "task_1757803191277"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:39:56.120Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "What was my test name and favorite color that I told you?"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:40:18.338Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": true,
+        "result": "Your test name is TestUser123 and your favorite color is blue.",
+        "taskId": "task_1757803218338"
+      }
+    }
+  ],
+  "createdAt": "2025-09-13T22:38:38.000Z",
+  "updatedAt": "2025-09-13T22:40:18.339Z"
+}

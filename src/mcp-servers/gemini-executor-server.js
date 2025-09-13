@@ -24,7 +24,8 @@ const server = new Server(
 );
 
 // Create GeminiChatManager instance
-const geminiChatManager = new GeminiChatManager();
+const sessionManager = new SessionManager('lexical-mcp-main');
+const geminiChatManager = new GeminiChatManager(sessionManager);
 
 // Tool definitions - ONLY executor tools, no planner needed!
 const AVAILABLE_TOOLS = [

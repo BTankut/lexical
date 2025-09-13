@@ -28,21 +28,41 @@ class AgentRegistry {
 
     /**
      * Calculates a score based on how well an agent's capabilities match the requirements.
-     * @param {string[]} capabilities - The capabilities of the agent.
-     * @param {string[]} requirements - The required capabilities.
+     * @param {object} capabilities - The capabilities object with scoring.
+     * @param {object} requirements - The requirements object.
      * @returns {number} The calculated score.
      */
     calculateScore(capabilities, requirements) {
-        if (!requirements || requirements.length === 0) {
-            return 0;
+        if (!requirements) {
+            return 1; // Default score
         }
-        const requiredSet = new Set(requirements);
+
         let score = 0;
-        for (const capability of capabilities) {
-            if (requiredSet.has(capability)) {
-                score++;
+
+        // Role capability scoring (most important)
+        if (requirements.role && capabilities[requirements.role]) {
+            score += capabilities[requirements.role] * 10;
+        }
+
+        // Language preference
+        if (requirements.language && capabilities.languages?.includes(requirements.language)) {
+            score += 5;
+        }
+
+        // Context window requirement
+        if (requirements.contextSize && capabilities.contextWindow >= requirements.contextSize) {
+            score += 3;
+        }
+
+        // Task complexity
+        if (requirements.complexity) {
+            if (requirements.complexity === 'high' && capabilities.planning > 0.9) {
+                score += 2;
+            } else if (requirements.complexity === 'low' && capabilities.execution > 0.9) {
+                score += 2;
             }
         }
+
         return score;
     }
 
