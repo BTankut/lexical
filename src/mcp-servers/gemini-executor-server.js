@@ -5,8 +5,11 @@ const {
   CallToolRequestSchema,
   ListToolsRequestSchema
 } = require('@modelcontextprotocol/sdk/types.js');
-const { Orchestrator } = require('../orchestrator/orchestrator.js');
+const { GeminiChatManager } = require('../utils/gemini-chat-manager.js');
 const { logger } = require('../utils/logger.js');
+const SessionManager = require('../utils/session-manager.js');
+const fs = require('fs').promises;
+const path = require('path');
 
 const server = new Server(
   {
@@ -20,12 +23,8 @@ const server = new Server(
   }
 );
 
-// Create orchestrator instance
-const orchestrator = new Orchestrator({
-  executor: {
-    type: 'gemini'
-  }
-});
+// Create GeminiChatManager instance
+const geminiChatManager = new GeminiChatManager();
 
 // Tool definitions - ONLY executor tools, no planner needed!
 const AVAILABLE_TOOLS = [
@@ -78,27 +77,30 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
   try {
     let result;
+    let prompt;
 
     switch (name) {
       case 'execute_code':
-        // Direct Gemini execution
-        result = await orchestrator.executeWithGemini(args.prompt);
+        prompt = args.prompt;
+        result = await geminiChatManager.executeWithContext(prompt);
         break;
 
       case 'execute_task':
-        // Execute with task structure
-        result = await orchestrator.execute(args.task);
+        prompt = args.task.prompt;
+        result = await geminiChatManager.executeWithContext(prompt);
         break;
 
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
 
+    const resultText = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+
     return {
       content: [
         {
           type: 'text',
-          text: typeof result === 'string' ? result : JSON.stringify(result, null, 2)
+          text: resultText
         }
       ]
     };

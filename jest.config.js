@@ -14,5 +14,8 @@ module.exports = {
   ],
   testTimeout: 30000, // 30 seconds for integration tests
   verbose: true,
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.js']
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!p-queue|d3-color|uuid)/'
+  ]
 };

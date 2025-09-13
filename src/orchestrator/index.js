@@ -3,6 +3,7 @@ const { Orchestrator } = require('./orchestrator.js');
 
 // Also export other orchestrator variants
 const { ResilientOrchestrator } = require('./resilient-orchestrator.js');
+const { MultiAgentOrchestrator } = require('./multi-agent-orchestrator.js');
 
 // Legacy class for backward compatibility (if needed)
 const { PlannerCLI } = require('./planner.js');
@@ -117,5 +118,6 @@ class LegacyOrchestrator {
 module.exports = {
   Orchestrator,
   ResilientOrchestrator,
-  LegacyOrchestrator
+  LegacyOrchestrator,
+  MultiAgentOrchestrator
 };
