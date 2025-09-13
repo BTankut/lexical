@@ -1,0 +1,39 @@
+{
+  "name": "lexical-tui-claude",
+  "version": "1.0.0",
+  "description": "Orchestrator system for Claude and other LLM CLIs with MCP integration",
+  "main": "src/mcp-servers/executor-server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "node test-orchestrator.js",
+    "start": "node src/mcp-servers/executor-server.js",
+    "start:pm2": "pm2 start pm2.config.js",
+    "stop:pm2": "pm2 stop lexical-orchestrator",
+    "restart:pm2": "pm2 restart lexical-orchestrator",
+    "logs": "pm2 logs lexical-orchestrator",
+    "dev": "LOG_LEVEL=debug node src/mcp-servers/executor-server.js",
+    "mcp": "node src/mcp-servers/executor-server.js",
+    "lint": "eslint src/**/*.js",
+    "format": "prettier --write src/**/*.js tests/**/*.js"
+  },
+  "keywords": ["mcp", "claude", "gemini", "orchestrator", "llm"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.0",
+    "joi": "^18.0.1",
+    "p-queue": "^8.1.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.35.0",
+    "jest": "^30.1.3",
+    "prettier": "^3.6.2"
+  }
+}

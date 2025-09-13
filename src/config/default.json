@@ -1,0 +1,29 @@
+{
+  "orchestrator": {
+    "planner": {
+      "type": "claude",
+      "timeout": 30000,
+      "maxRetries": 3
+    },
+    "executor": {
+      "type": "gemini",
+      "timeout": 60000,
+      "maxRetries": 3
+    },
+    "queue": {
+      "concurrency": 1,
+      "interval": 1000,
+      "intervalCap": 10
+    },
+    "validateResults": false
+  },
+  "logging": {
+    "level": "info",
+    "maxFiles": 5,
+    "maxSize": "5m"
+  },
+  "server": {
+    "name": "lexical-orchestrator",
+    "version": "1.0.0"
+  }
+}
