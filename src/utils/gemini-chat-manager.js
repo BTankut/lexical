@@ -156,6 +156,10 @@ class GeminiChatManager {
     
     return result;
   }
+
+  async chat(prompt) {
+    return this.executeWithContext(prompt);
+  }
 }
 
 module.exports = { GeminiChatManager };

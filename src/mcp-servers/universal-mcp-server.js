@@ -15,7 +15,7 @@ const { processMonitor } = require('../utils/process-monitor.js');
 class UniversalMCPServer {
   constructor() {
     this.orchestrator = new MultiAgentOrchestrator({ executor: { type: 'gemini' } });
-    this.workflowEngine = new WorkflowEngine();
+    this.workflowEngine = new WorkflowEngine(this.orchestrator);
     this.sessionManager = new SessionManager('lexical-mcp-main');
     this.geminiChatManager = new GeminiChatManager(this.sessionManager);
     this.server = new Server(

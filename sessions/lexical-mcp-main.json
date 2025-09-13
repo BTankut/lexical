@@ -282,8 +282,246 @@
         "result": "Your test name is TestUser123 and your favorite color is blue.",
         "taskId": "task_1757803218338"
       }
+    },
+    {
+      "timestamp": "2025-09-13T22:40:34.576Z",
+      "type": "tool_call",
+      "toolName": "execute_task",
+      "arguments": {
+        "task": {
+          "prompt": "What is 2+2?"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:40:40.142Z",
+      "type": "tool_result",
+      "toolName": "execute_task",
+      "result": {
+        "success": false,
+        "error": "Gemini command failed: "
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:00.443Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "What is the capital of France?",
+        "preferences": {
+          "agent": "gemini"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:20.602Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": true,
+        "result": "Paris.",
+        "agent": "gemini",
+        "workflow": "direct"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:32.131Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_workflow",
+      "arguments": {
+        "workflow": "direct",
+        "input": "Calculate 5 + 3"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:32.132Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_workflow",
+      "result": {
+        "success": true,
+        "workflow": "direct",
+        "result": {
+          "id": "7b753ca3-ebfd-476a-8440-1a0eda41812a",
+          "workflow": "direct",
+          "startTime": 1757803352132,
+          "input": "Calculate 5 + 3",
+          "context": {},
+          "steps": [
+            {
+              "name": "Execute Task",
+              "status": "failed",
+              "error": "Cannot read properties of undefined (reading 'executeAuto')",
+              "duration": 0
+            }
+          ],
+          "status": "completed",
+          "endTime": 1757803352132,
+          "duration": 0
+        },
+        "duration": 0
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:41.691Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_parallel",
+      "arguments": {
+        "prompt": "Tell me a fun fact",
+        "agents": [
+          "gemini"
+        ],
+        "mode": "all"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:50.117Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_parallel",
+      "result": {
+        "success": true,
+        "mode": "all",
+        "agents": [
+          "gemini"
+        ],
+        "results": [
+          "A cloud can weigh around a million tonnes."
+        ],
+        "totalResults": 1
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:58.971Z",
+      "type": "tool_call",
+      "toolName": "get_capabilities",
+      "arguments": {
+        "task": "Write Python code"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:42:58.972Z",
+      "type": "tool_result",
+      "toolName": "get_capabilities",
+      "result": {
+        "task": "Write Python code",
+        "requirements": {},
+        "recommendations": [
+          {
+            "agent": "claude",
+            "score": 0,
+            "reasons": [],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.95,
+              "execution": 0.85,
+              "review": 0.9,
+              "contextWindow": 200000,
+              "languages": [
+                "python",
+                "javascript",
+                "go"
+              ]
+            }
+          },
+          {
+            "agent": "gemini",
+            "score": 0,
+            "reasons": [],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.85,
+              "execution": 0.95,
+              "review": 0.8,
+              "contextWindow": 1000000,
+              "languages": [
+                "python",
+                "javascript",
+                "java"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:43:07.493Z",
+      "type": "tool_call",
+      "toolName": "get_process_stats",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-13T22:43:07.493Z",
+      "type": "tool_result",
+      "toolName": "get_process_stats",
+      "result": {
+        "monitoring": {
+          "active": true,
+          "checkInterval": "10 seconds",
+          "maxCpuThreshold": "50%",
+          "maxProcessAge": "5 minutes"
+        },
+        "processes": [
+          {
+            "pid": 16537,
+            "name": "gemini-chat",
+            "ageSeconds": 242,
+            "warnings": 0
+          },
+          {
+            "pid": 17439,
+            "name": "gemini-chat",
+            "ageSeconds": 67,
+            "warnings": 0
+          }
+        ],
+        "summary": {
+          "totalActiveProcesses": 2,
+          "systemHealth": "good",
+          "lastCheck": "2025-09-13T22:43:07.493Z"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:48:58.879Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_workflow",
+      "arguments": {
+        "workflow": "direct",
+        "input": "What is 10 + 5?"
+      }
+    },
+    {
+      "timestamp": "2025-09-13T22:49:02.432Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_workflow",
+      "result": {
+        "success": true,
+        "workflow": "direct",
+        "result": {
+          "id": "12c4d50e-10de-46ef-94d7-357740e9dd9e",
+          "workflow": "direct",
+          "startTime": 1757803738879,
+          "input": "What is 10 + 5?",
+          "context": {
+            "0": "1",
+            "1": "5"
+          },
+          "steps": [
+            {
+              "name": "Execute Task",
+              "status": "success",
+              "agent": "auto",
+              "duration": 3553,
+              "output": "15"
+            }
+          ],
+          "status": "completed",
+          "endTime": 1757803742432,
+          "duration": 3553
+        },
+        "duration": 3553
+      }
     }
   ],
   "createdAt": "2025-09-13T22:38:38.000Z",
-  "updatedAt": "2025-09-13T22:40:18.339Z"
+  "updatedAt": "2025-09-13T22:49:02.432Z"
 }
