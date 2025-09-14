@@ -1,4 +1,5 @@
 const { GeminiChatManager } = require('../utils/gemini-chat-manager');
+const GeminiExecutor = require('./gemini-executor');
 const { logger } = require('../utils/logger');
 
 /**
@@ -24,22 +25,27 @@ class ExecutorManager {
   initializeExecutor() {
     switch(this.executorType.toLowerCase()) {
       case 'gemini':
-        // Real Gemini CLI integration - already working
-        logger.info('Using GeminiChatManager as executor');
-        return new GeminiChatManager({
-          sessionName: 'lexical-executor-gemini'
+        // Real Gemini CLI integration - using new GeminiExecutor
+        logger.info('Using GeminiExecutor');
+        return new GeminiExecutor({
+          sessionName: 'lexical-executor-gemini',
+          workingDirectory: this.workingDirectory || process.cwd()
         });
 
       case 'claude':
         // TODO: Implement real Claude CLI executor
+        // Will use ClaudeExecutor class with stdin handling
         logger.warn('Claude CLI executor not yet implemented, falling back to Gemini');
+        logger.info('Claude CLI requires: stdin input, same working directory');
         return new GeminiChatManager({
           sessionName: 'lexical-executor-fallback'
         });
 
       case 'codex':
         // TODO: Implement real Codex CLI executor
+        // Will use CodexExecutor with special flags and environment
         logger.warn('Codex CLI executor not yet implemented, falling back to Gemini');
+        logger.info('Codex CLI requires: stdin input, --dangerously-bypass-approvals-and-sandbox, NO_COLOR env');
         return new GeminiChatManager({
           sessionName: 'lexical-executor-fallback'
         });

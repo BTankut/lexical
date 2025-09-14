@@ -213,29 +213,112 @@ async handleExecuteWithFeedback(params) {
 
 ### Phase 4: Real Executor Implementations 🚀
 
-#### 4.1 Claude CLI Executor
-**New File:** `src/executor/claude-cli-executor.js`
+## ⚠️ CRITICAL: Each CLI Has UNIQUE Requirements!
+
+### CLI-Specific Implementation Requirements
+
+#### 🟢 Gemini CLI (ALREADY WORKING)
+- **Command:** `gemini "prompt"`
+- **Input Method:** Command line argument
+- **Context:** Via `/chat save` and `/chat resume` commands
+- **Working Directory:** Any
+- **Special Requirements:** Session management
+
+#### 🔵 Claude CLI
+**File:** `src/executor/claude-executor.js`
 ```javascript
-class ClaudeCLIExecutor {
+class ClaudeExecutor {
   constructor() {
-    this.contextFile = './sessions/claude-executor-context.json';
+    this.workingDirectory = process.cwd();
   }
 
   async executeWithContext(prompt) {
-    // Real Claude CLI integration
-    const child = spawn('claude', ['--print']);
-    // ... actual implementation
+    // Claude expects prompt via STDIN!
+    const child = spawn('claude', [prompt], {
+      cwd: this.workingDirectory,
+      stdin: 'pipe',  // CRITICAL: Claude needs stdin
+      stdout: 'pipe',
+      stderr: 'pipe'
+    });
+
+    // Send via stdin if needed
+    if (additionalInput) {
+      child.stdin.write(additionalInput);
+      child.stdin.end();
+    }
   }
 }
 ```
 
-#### 4.2 Codex CLI Executor
-**New File:** `src/executor/codex-cli-executor.js`
+#### 🟠 Codex CLI (MOST COMPLEX)
+**File:** `src/executor/codex-executor.js`
 ```javascript
-class CodexCLIExecutor {
-  // Similar structure for Codex
+class CodexExecutor {
+  constructor() {
+    this.workingDirectory = process.cwd();
+
+    // CRITICAL: Disable terminal UI
+    this.env = {
+      ...process.env,
+      'NO_COLOR': '1',
+      'FORCE_COLOR': '0',
+      'TERM': 'dumb'
+    };
+  }
+
+  async executeWithContext(prompt) {
+    // CRITICAL: Codex specific flags
+    const args = [
+      'exec',
+      '--dangerously-bypass-approvals-and-sandbox',  // Skip all approvals
+      '--skip-git-repo-check',                       // Skip git check
+      '--json'                                        // JSON output
+    ];
+
+    const child = spawn('codex', args, {
+      cwd: this.workingDirectory,
+      stdin: 'pipe',  // CRITICAL: Prompt via STDIN
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: this.env
+    });
+
+    // CRITICAL: Send prompt via stdin, NOT as argument!
+    child.stdin.write(prompt);
+    child.stdin.end();
+  }
 }
 ```
+
+### Critical Implementation Notes:
+
+1. **Working Directory Consistency**
+   - ALL executors MUST use the same working directory
+   - Default: `process.cwd()` or configurable
+
+2. **Stdin vs Arguments**
+   - **Gemini:** Prompt as argument
+   - **Claude:** Prompt via stdin OR argument
+   - **Codex:** Prompt ONLY via stdin (NEVER as argument)
+
+3. **Environment Variables (Codex only)**
+   ```javascript
+   env['NO_COLOR'] = '1'      // Disable colors
+   env['FORCE_COLOR'] = '0'   // Force no colors
+   env['TERM'] = 'dumb'       // Disable terminal UI
+   ```
+
+4. **Codex Special Flags**
+   - `--dangerously-bypass-approvals-and-sandbox`: Skip ALL security prompts
+   - `--skip-git-repo-check`: Don't check for git repo
+   - `--json`: Get JSON formatted output
+   - `--full-auto`: Full automation (some versions)
+
+5. **Testing Requirements**
+   - Test in SAME directory for all executors
+   - Verify stdin handling for Codex/Claude
+   - Check output parsing for each CLI
+   - NO MOCK DATA - Real CLI calls only
 
 ---
 
