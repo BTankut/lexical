@@ -1,261 +1,176 @@
-# 🛠️ MCP Tools Kullanım Rehberi
+# 🛠️ MCP Tools Guide - Simplified Architecture
 
-## 📋 Tüm Tool'ların Listesi ve Amaçları
+## 📋 Core Tools (9 Essential Tools)
 
-### 1. **list_agents**
-**Amaç:** Sistemde kullanılabilir agent'ları listeler
-**Ne zaman kullanılır:** Hangi agent'ların mevcut olduğunu görmek için
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__list_agents()
-// Dönen: { agents: [{name: 'claude', capabilities: [...]}, {name: 'gemini', ...}] }
-```
+### 1. **orchestrate** ⭐ (Primary Tool)
+**Purpose:** Universal task orchestration with intelligent agent and workflow selection
+**When to use:** For any task - it automatically selects the best approach
+**Features:**
+- Auto-detects workflow needs (direct vs plan-execute)
+- Auto-selects best agent (Claude for planning/review, Gemini for execution)
+- Handles special queries (e.g., "list agents" or "list workflows")
 
-### 2. **list_workflows**
-**Amaç:** Önceden tanımlı workflow'ları listeler
-**Ne zaman kullanılır:** Hangi çalışma akışlarının kullanılabileceğini görmek için
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__list_workflows()
-// Dönen: { workflows: [{name: 'direct', description: '...'}, {name: 'plan-execute', ...}] }
-```
-
-### 3. **execute_code** (Legacy)
-**Amaç:** Gemini ile kod üretir
-**Ne zaman kullanılır:** Hızlı kod üretimi için
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__execute_code({
-  prompt: "Write a Python function to calculate factorial"
-})
-// Dönen: { success: true, code: "...", message: "Code generated successfully" }
-```
-
-### 4. **execute_task** (Legacy)
-**Amaç:** Herhangi bir görevi Gemini ile çalıştırır
-**Ne zaman kullanılır:** Genel amaçlı görevler için
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__execute_task({
-  task: {
-    prompt: "Explain quantum computing",
-    id: "task_123" // optional
-  }
-})
-// Dönen: { success: true, result: "...", taskId: "task_123" }
-```
-
-### 5. **save_chat_session**
-**Amaç:** Gemini chat oturumunu kaydeder
-**Ne zaman kullanılır:** Context'i korumak için görev sonrası
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__save_chat_session()
-// Dönen: true/false
-```
-
-### 6. **resume_chat_session**
-**Amaç:** Önceki chat oturumunu geri yükler
-**Ne zaman kullanılır:** Context'i geri getirmek için görev öncesi
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__resume_chat_session()
-// Dönen: true/false
-```
-
-### 7. **orchestrate** ⭐ (Yeni)
-**Amaç:** Akıllı agent ve workflow seçimi ile görevi işler
-**Ne zaman kullanılır:** Otomatik optimizasyon istediğinizde
-**Örnek Kullanım:**
+**Example:**
 ```javascript
 mcp__lexical-universal__orchestrate({
   prompt: "Create a REST API with authentication",
   preferences: {
-    agent: "gemini",     // optional: 'claude', 'gemini', 'auto'
-    workflow: "direct"   // optional: 'direct', 'plan-execute'
+    agent: "auto",      // or 'claude', 'gemini'
+    workflow: "auto",   // or 'direct', 'plan-execute'
+    role: "execute"     // or 'plan', 'review'
   }
 })
-// Dönen: { success: true, result: "...", agent: "gemini", workflow: "direct" }
 ```
 
-### 8. **orchestrate_workflow** ⭐ (Yeni)
-**Amaç:** Belirli bir workflow ile görevi çalıştırır
-**Ne zaman kullanılır:** Spesifik çalışma akışı istediğinizde
-**Örnek Kullanım:**
-```javascript
-mcp__lexical-universal__orchestrate_workflow({
-  workflow: "plan-execute",  // 'direct', 'plan-execute', 'competitive', 'iterative'
-  input: "Build a todo app",
-  context: { language: "Python" },  // optional
-  overrides: { timeout: 60000 }     // optional
-})
-// Dönen: { success: true, workflow: "plan-execute", result: {...}, duration: 5000 }
-```
+### 2. **orchestrate_parallel**
+**Purpose:** Execute tasks with multiple agents simultaneously
+**When to use:** When you want to compare results or get faster responses
+**Modes:**
+- `race`: First successful result wins
+- `all`: Get all results
+- `vote`: Most common result wins
 
-### 9. **orchestrate_parallel** ⭐ (Yeni)
-**Amaç:** Birden fazla agent'ı paralel çalıştırır
-**Ne zaman kullanılır:** Hız veya karşılaştırma için
-**Örnek Kullanım:**
+**Example:**
 ```javascript
 mcp__lexical-universal__orchestrate_parallel({
-  prompt: "Write a sorting algorithm",
+  prompt: "Optimize this SQL query",
   agents: ["claude", "gemini"],
-  mode: "all",        // 'race' (ilk biten), 'all' (hepsi), 'vote' (oylama)
-  role: "executor"    // optional
+  mode: "race"
 })
-// Dönen: { success: true, mode: "all", agents: [...], results: [...] }
 ```
 
-### 10. **get_capabilities** ⭐ (Yeni)
-**Amaç:** Görev için en uygun agent'ı önerir
-**Ne zaman kullanılır:** Agent seçimi için analiz gerektiğinde
-**Örnek Kullanım:**
+### 3. **save_chat_session**
+**Purpose:** Persist Gemini chat context for continuity
+**When to use:** After completing important tasks to preserve context
+**Returns:** `true` on success
+
+### 4. **resume_chat_session**
+**Purpose:** Restore previous Gemini chat context
+**When to use:** Before starting related tasks to maintain context
+**Returns:** `true` on success
+
+### 5. **get_process_stats**
+**Purpose:** Monitor system health and active processes
+**When to use:** To check CPU usage and manage running processes
+**Returns:** Process list with warnings and system health status
+
+### 6. **get_capabilities**
+**Purpose:** Get agent recommendations for specific tasks
+**When to use:** When you need to know which agent is best for a task
+**Example:**
 ```javascript
 mcp__lexical-universal__get_capabilities({
-  task: "Debug JavaScript code",
+  task: "Process 1MB of text",
   requirements: {
-    language: "javascript",
-    complexity: "high"
+    contextSize: 1000000,
+    role: "execute"
   }
 })
-// Dönen: { task: "...", recommendations: [{agent: "claude", score: 95, reasons: [...]}] }
 ```
 
-### 11. **get_process_stats** ⭐ (Yeni)
-**Amaç:** Sistem process durumunu gösterir
-**Ne zaman kullanılır:** Performans monitoring için
-**Örnek Kullanım:**
+### 7. **orchestrate_workflow**
+**Purpose:** Execute specific workflow patterns
+**When to use:** When you need fine control over execution flow
+**Example:**
 ```javascript
-mcp__lexical-universal__get_process_stats()
-// Dönen: {
-//   monitoring: { active: true, ... },
-//   processes: [{pid: 123, name: "gemini-chat", ...}],
-//   summary: { totalActiveProcesses: 2, systemHealth: "good" }
-// }
-```
-
-## 🎯 Kullanım Senaryoları
-
-### Senaryo 1: Basit Kod Üretimi
-```javascript
-// Hızlı ve direkt
-execute_code({ prompt: "Python fibonacci function" })
-```
-
-### Senaryo 2: Planlı Proje Geliştirme
-```javascript
-// Claude planlar, Gemini uygular
-orchestrate_workflow({
+mcp__lexical-universal__orchestrate_workflow({
   workflow: "plan-execute",
-  input: "Create a blog platform with user authentication"
+  input: "Build a todo app",
+  context: { language: "Python" }
 })
 ```
 
-### Senaryo 3: Karşılaştırmalı Çözüm
+### 8. **list_workflows**
+**Purpose:** List available workflow patterns
+**When to use:** To discover available execution patterns
+**Note:** Can also be accessed via `orchestrate({ prompt: "list workflows" })`
+
+### 9. **list_agents**
+**Purpose:** List available agents and their status
+**When to use:** To see which agents are available
+**Note:** Can also be accessed via `orchestrate({ prompt: "list agents" })`
+
+## 🎯 Usage Patterns
+
+### Simple Tasks
 ```javascript
-// İki agent'ı karşılaştır
+// Let the system decide everything
+orchestrate({ prompt: "Write a factorial function" })
+```
+
+### Complex Tasks
+```javascript
+// Force plan-execute workflow
+orchestrate({
+  prompt: "Design a microservices architecture",
+  preferences: { workflow: "plan-execute" }
+})
+```
+
+### Comparison Tasks
+```javascript
+// Get solutions from multiple agents
 orchestrate_parallel({
-  prompt: "Optimize this SQL query",
+  prompt: "Solve this algorithm problem",
   agents: ["claude", "gemini"],
   mode: "all"
 })
 ```
 
-### Senaryo 4: Context Korumalı Çalışma
+### Context-Aware Tasks
 ```javascript
-// 1. Resume context
+// Resume context, execute, then save
 resume_chat_session()
-
-// 2. Execute task
-execute_task({ task: { prompt: "Continue the previous implementation" }})
-
-// 3. Save context
+orchestrate({ prompt: "Continue implementing the feature" })
 save_chat_session()
 ```
 
-### Senaryo 5: İteratif İyileştirme
-```javascript
-orchestrate_workflow({
-  workflow: "iterative",
-  input: "Refactor this legacy code",
-  context: { maxIterations: 3 }
-})
-```
+## 🔄 Workflow Types
 
-## 🔄 Workflow Tipleri
+1. **direct**: Single-step execution
+2. **plan-execute**: Plan first, then execute
+3. **auto**: System chooses based on complexity
 
-### **direct**
-- Tek adımda çalıştırma
-- En hızlı yöntem
-- Basit görevler için ideal
+## 🤖 Available Agents
 
-### **plan-execute**
-- İki aşamalı: Planlama + Uygulama
-- Claude planlar, Gemini uygular
-- Karmaşık projeler için ideal
+1. **claude**: Best for planning, review, complex reasoning
+2. **gemini**: Best for code execution, quick tasks
+3. **auto**: System selects based on task requirements
 
-### **competitive**
-- Paralel execution
-- En iyi sonucu seçme
-- Kalite odaklı görevler için
+## 📊 Agent Selection Logic
 
-### **iterative**
-- Execute → Review → Refine döngüsü
-- Sürekli iyileştirme
-- Mükemmeliyetçi görevler için
+The system automatically selects agents based on:
+- **Claude selected when:**
+  - Task contains "plan", "design", "architect"
+  - Task contains "review", "improve"
+  - Role is explicitly "plan"
 
-## 📊 Agent Yetenekleri
+- **Gemini selected when:**
+  - Task is execution-focused
+  - Quick response needed
+  - Role is "execute"
 
-### **Claude**
-- ✅ Planlama (95%)
-- ✅ Code review (90%)
-- ✅ Dokümantasyon
-- ✅ Mimari tasarım
-- Context: 200K token
+## 💡 Best Practices
 
-### **Gemini**
-- ✅ Hızlı execution (95%)
-- ✅ Kod üretimi
-- ✅ Pratik çözümler
-- ✅ Chat persistence
-- Context: 1M token
+1. **Use `orchestrate` for most tasks** - It's the smartest tool
+2. **Save sessions after important work** - Preserves context
+3. **Use parallel for comparison** - Great for getting multiple perspectives
+4. **Monitor processes regularly** - Use get_process_stats to check health
+5. **Let auto mode work** - The system is good at choosing
 
-## ⚡ Performance İpuçları
+## 🚀 Quick Reference
 
-1. **Basit görevler** → `execute_code` veya `execute_task`
-2. **Karmaşık projeler** → `orchestrate_workflow` ile plan-execute
-3. **Hız kritik** → `orchestrate_parallel` ile race mode
-4. **Kalite kritik** → `orchestrate_parallel` ile all mode + vote
-5. **Context önemli** → Her zaman `save/resume_chat_session` kullan
+| Tool | Primary Use | Key Feature |
+|------|------------|-------------|
+| orchestrate | Everything | Auto-selects best approach |
+| orchestrate_parallel | Comparison | Multiple agents at once |
+| save/resume_chat_session | Context | Maintains conversation state |
+| get_process_stats | Monitoring | System health check |
+| get_capabilities | Discovery | Find best agent for task |
 
-## 🚨 Önemli Notlar
+## 📝 Notes
 
-- **Context Management**: Gemini her MCP call'da context kaybeder, `save/resume` kullanın
-- **Timeout**: Process monitor 50% CPU'da uyarır, 5 dakikada timeout
-- **Workflow Selection**: Emin değilseniz `orchestrate` otomatik seçim yapar
-- **Legacy Tools**: `execute_code` ve `execute_task` geriye uyumluluk için
-
-## 🔧 Troubleshooting
-
-### "Gemini command failed"
-- Process monitor runaway algılamış olabilir
-- CPU kullanımını kontrol edin: `get_process_stats()`
-
-### "Context lost"
-- `resume_chat_session()` kullanmayı unutmuş olabilirsiniz
-- Her görev öncesi resume, sonrası save yapın
-
-### "Workflow not found"
-- Built-in workflow'ları kontrol edin: `list_workflows()`
-- Workflow adını doğru yazdığınızdan emin olun
-
-## 📈 Best Practices
-
-1. **Her zaman context koru**: Resume → Execute → Save
-2. **Doğru workflow seç**: Görev karmaşıklığına göre
-3. **Process monitor'ü izle**: `get_process_stats()` ile
-4. **Agent yeteneklerini kullan**: `get_capabilities()` ile analiz
-5. **Paralel çalıştır**: Zaman kritikse `orchestrate_parallel()`
-
----
-*Bu rehber Universal MCP Server v2.0 için hazırlanmıştır*
+- Legacy tools (execute_code, execute_task) have been removed - use `orchestrate` instead
+- The system is optimized for Gemini execution with Claude planning when needed
+- All tools support context persistence through the session management system
+- Process monitoring runs continuously to prevent CPU overload

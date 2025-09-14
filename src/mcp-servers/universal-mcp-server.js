@@ -40,7 +40,7 @@ class UniversalMCPServer {
     return [
       {
         name: 'orchestrate',
-        description: 'Process request with intelligent agent and workflow selection',
+        description: 'Process request with intelligent agent and workflow selection. Can list agents/workflows with special prompts.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -59,36 +59,7 @@ class UniversalMCPServer {
         name: 'list_agents',
         description: 'List all available agents',
         inputSchema: { type: 'object', properties: {} }
-      },
-      {
-        name: 'execute_code',
-        description: 'Execute code generation task (legacy)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            prompt: { type: 'string', description: 'The prompt for code generation' }
-          },
-          required: ['prompt']
-        }
-      },
-      {
-        name: 'execute_task',
-        description: 'Execute any task (legacy)',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            task: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                prompt: { type: 'string' }
-              },
-              required: ['prompt']
-            }
-          },
-          required: ['task']
-        }
-      },
+},
       {
         name: 'save_chat_session',
         description: 'Saves the current chat session',
@@ -176,12 +147,6 @@ class UniversalMCPServer {
           case 'list_agents':
             result = await this.handleListAgents(args);
             break;
-          case 'execute_code':
-            result = await this.handleLegacyExecuteCode(args);
-            break;
-          case 'execute_task':
-            result = await this.handleLegacyExecuteTask(args);
-            break;
           case 'save_chat_session':
             result = await this.handleSaveChatSession(args);
             break;
@@ -249,18 +214,76 @@ class UniversalMCPServer {
   }
 
   async handleOrchestrate(params) {
-    // console.log removed to avoid breaking MCP protocol
+    // Enhanced orchestrate with workflow and agent selection
     const { prompt, preferences = {} } = params;
 
     try {
-      // Use Gemini with context management
-      const result = await this.geminiChatManager.executeWithContext(prompt);
+      // Handle special list requests
+      if (prompt.match(/list.*workflows?/i)) {
+        const workflowList = await this.handleListWorkflows({});
+        return {
+          success: true,
+          result: JSON.stringify(workflowList, null, 2),
+          agent: 'system',
+          workflow: 'info'
+        };
+      }
+      if (prompt.match(/list.*agents?/i)) {
+        const agentList = await this.handleListAgents({});
+        return {
+          success: true,
+          result: JSON.stringify(agentList, null, 2),
+          agent: 'system',
+          workflow: 'info'
+        };
+      }
+
+      const { agent = 'auto', workflow = 'auto', role = 'execute' } = preferences;
+
+      // Auto-select workflow if needed
+      let selectedWorkflow = workflow;
+      if (workflow === 'auto') {
+        // Detect workflow based on prompt
+        if (prompt.match(/plan|design|architect/i)) {
+          selectedWorkflow = 'plan-execute';
+        } else {
+          selectedWorkflow = 'direct';
+        }
+      }
+
+      // Auto-select agent if needed
+      let selectedAgent = agent;
+      if (agent === 'auto') {
+        // Detect best agent based on task
+        if (role === 'plan' || prompt.match(/review|improve/i)) {
+          selectedAgent = 'claude';
+        } else {
+          selectedAgent = 'gemini';
+        }
+      }
+
+      // Execute based on workflow
+      let result;
+      if (selectedWorkflow === 'plan-execute' && this.workflowEngine) {
+        // Use workflow engine for complex workflows
+        const workflowResult = await this.workflowEngine.execute(selectedWorkflow, prompt, {});
+        result = workflowResult.steps.map(s => s.output).join('\n');
+      } else if (selectedAgent === 'gemini') {
+        // Use Gemini with context management
+        result = await this.geminiChatManager.executeWithContext(prompt);
+      } else if (this.orchestrator && this.orchestrator.executeWithAgent) {
+        // Use orchestrator for other agents
+        result = await this.orchestrator.executeWithAgent(selectedAgent, prompt, { role });
+      } else {
+        // Fallback to Gemini
+        result = await this.geminiChatManager.executeWithContext(prompt);
+      }
 
       return {
         success: true,
         result: result,
-        agent: preferences.agent || 'gemini',
-        workflow: preferences.workflow || 'direct'
+        agent: selectedAgent,
+        workflow: selectedWorkflow
       };
     } catch (error) {
       logger.error('Orchestration failed:', error);
@@ -272,71 +295,60 @@ class UniversalMCPServer {
   }
 
   async handleListWorkflows(params) {
-    // console.log removed to avoid breaking MCP protocol
-    // Proper implementation will call this.workflowEngine
-    return {
-      workflows: [
-        { name: 'plan-execute', description: 'Plan with one agent, execute with another.' },
-        { name: 'direct', description: 'Direct execution of a task.' },
-      ],
-    };
+    // Return actual workflows from the workflow engine
+    const workflows = [];
+
+    // Get built-in workflows
+    if (this.workflowEngine && this.workflowEngine.workflows) {
+      for (const [name, workflow] of this.workflowEngine.workflows.entries()) {
+        workflows.push({
+          name: name,
+          description: workflow.description || `${name} workflow`,
+          steps: workflow.steps ? workflow.steps.length : 0
+        });
+      }
+    }
+
+    // Add default workflows if none found
+    if (workflows.length === 0) {
+      workflows.push(
+        { name: 'direct', description: 'Direct execution of a task', steps: 1 },
+        { name: 'plan-execute', description: 'Plan with one agent, execute with another', steps: 2 }
+      );
+    }
+
+    return { workflows };
   }
 
   async handleListAgents(params) {
-    // console.log removed to avoid breaking MCP protocol
-    // Proper implementation will call this.orchestrator
-    return {
-      agents: [
-        { name: 'claude', capabilities: ['plan', 'execute', 'review'] },
-        { name: 'gemini', capabilities: ['execute'] },
-      ],
-    };
-  }
+    // Return actual agents from the orchestrator
+    const agents = [];
 
-  async handleLegacyExecuteCode(params) {
-    // console.log removed to avoid breaking MCP protocol
-    const { prompt } = params;
-
-    try {
-      // Use Gemini with context management for code generation
-      const result = await this.geminiChatManager.executeWithContext(prompt);
-
-      return {
-        success: true,
-        code: result,
-        message: 'Code generated successfully with Gemini'
-      };
-    } catch (error) {
-      logger.error('Execute code failed:', error);
-      return {
-        success: false,
-        error: error.message
-      };
+    // Get agents from registry if available
+    if (this.orchestrator && this.orchestrator.agentRegistry) {
+      const registry = this.orchestrator.agentRegistry;
+      for (const [name, agent] of registry.agents.entries()) {
+        const capabilities = registry.capabilities.get(name) || {};
+        agents.push({
+          name: name,
+          capabilities: Object.keys(capabilities).filter(k => capabilities[k] > 0.5),
+          status: 'available',
+          contextWindow: capabilities.contextWindow || 0
+        });
+      }
     }
-  }
 
-  async handleLegacyExecuteTask(params) {
-    // console.log removed to avoid breaking MCP protocol
-    const { task } = params;
-    const prompt = task.prompt || task;
-
-    try {
-      // Execute task with Gemini and context
-      const result = await this.geminiChatManager.executeWithContext(prompt);
-
-      return {
-        success: true,
-        result: result,
-        taskId: task.id || 'task_' + Date.now()
-      };
-    } catch (error) {
-      logger.error('Execute task failed:', error);
-      return {
-        success: false,
-        error: error.message
-      };
+    // Add default agents if none found
+    if (agents.length === 0) {
+      agents.push(
+        { name: 'claude', capabilities: ['plan', 'execute', 'review'], status: 'available' },
+        { name: 'gemini', capabilities: ['execute'], status: 'available' }
+      );
     }
+
+    return { agents };
   }
+
 
   async handleOrchestrateWorkflow(params) {
     // console.log removed to avoid breaking MCP protocol
@@ -360,7 +372,7 @@ class UniversalMCPServer {
   }
 
   async handleOrchestrateParallel(params) {
-    console.log('handleOrchestrateParallel called with:', params);
+    // console.log removed to avoid breaking MCP protocol
     const { prompt, agents = ['claude', 'gemini'], mode = 'all', role = 'execute' } = params;
 
     try {
@@ -395,7 +407,7 @@ class UniversalMCPServer {
   }
 
   async handleGetCapabilities(params) {
-    console.log('handleGetCapabilities called with:', params);
+    // console.log removed to avoid breaking MCP protocol
     const { task = '', requirements = {} } = params;
 
     // Get all agents and their capabilities

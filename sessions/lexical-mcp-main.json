@@ -1171,8 +1171,214 @@
           "lastCheck": "2025-09-13T23:10:55.469Z"
         }
       }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:02.444Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "Write a simple hello world function in Python",
+        "preferences": {
+          "agent": "auto",
+          "workflow": "auto"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:22.388Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": true,
+        "result": "I've created a Python file named `hello_world.py` with a function that prints \"Hello, World!\".",
+        "agent": "auto",
+        "workflow": "auto"
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:25.603Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "list workflows"
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:31.423Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": false,
+        "error": "Gemini command failed: "
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:34.588Z",
+      "type": "tool_call",
+      "toolName": "list_workflows",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-14T07:02:34.589Z",
+      "type": "tool_result",
+      "toolName": "list_workflows",
+      "result": {
+        "workflows": [
+          {
+            "name": "plan-execute",
+            "description": "Plan with one agent, execute with another."
+          },
+          {
+            "name": "direct",
+            "description": "Direct execution of a task."
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:38.854Z",
+      "type": "tool_call",
+      "toolName": "orchestrate_parallel",
+      "arguments": {
+        "prompt": "What is 5 + 3?",
+        "agents": [
+          "gemini"
+        ],
+        "mode": "all"
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:44.215Z",
+      "type": "tool_result",
+      "toolName": "orchestrate_parallel",
+      "result": {
+        "success": true,
+        "mode": "all",
+        "agents": [
+          "gemini"
+        ],
+        "results": [
+          "8"
+        ],
+        "totalResults": 1
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:02:47.954Z",
+      "type": "tool_call",
+      "toolName": "get_process_stats",
+      "arguments": {}
+    },
+    {
+      "timestamp": "2025-09-14T07:02:47.954Z",
+      "type": "tool_result",
+      "toolName": "get_process_stats",
+      "result": {
+        "monitoring": {
+          "active": true,
+          "checkInterval": "10 seconds",
+          "maxCpuThreshold": "50%",
+          "maxProcessAge": "5 minutes"
+        },
+        "processes": [
+          {
+            "pid": 3124,
+            "name": "gemini-chat",
+            "ageSeconds": 32,
+            "warnings": 0
+          }
+        ],
+        "summary": {
+          "totalActiveProcesses": 1,
+          "systemHealth": "good",
+          "lastCheck": "2025-09-14T07:02:47.954Z"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:03:00.812Z",
+      "type": "tool_call",
+      "toolName": "orchestrate",
+      "arguments": {
+        "prompt": "list workflows"
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:03:23.483Z",
+      "type": "tool_result",
+      "toolName": "orchestrate",
+      "result": {
+        "success": true,
+        "result": "Here are the available workflows:\n\n*   **Direct Execution**: A single-step workflow where the task is executed directly by an automatically selected agent.\n*   **Plan and Execute**: A two-step workflow where one agent plans and another executes.\n*   **Competitive Execution**: Both agents execute the task in parallel, and the best result is chosen.\n*   **Iterative Refinement**: An iterative loop of executing, reviewing, and refining the task until completion.",
+        "agent": "gemini",
+        "workflow": "direct"
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:03:27.862Z",
+      "type": "tool_call",
+      "toolName": "get_capabilities",
+      "arguments": {
+        "task": "Create a machine learning model",
+        "requirements": {
+          "role": "execute",
+          "language": "python"
+        }
+      }
+    },
+    {
+      "timestamp": "2025-09-14T07:03:27.862Z",
+      "type": "tool_result",
+      "toolName": "get_capabilities",
+      "result": {
+        "task": "Create a machine learning model",
+        "requirements": {
+          "role": "execute",
+          "language": "python"
+        },
+        "recommendations": [
+          {
+            "agent": "claude",
+            "score": 5,
+            "reasons": [
+              "Supports python"
+            ],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.95,
+              "execution": 0.85,
+              "review": 0.9,
+              "contextWindow": 200000,
+              "languages": [
+                "python",
+                "javascript",
+                "go"
+              ]
+            }
+          },
+          {
+            "agent": "gemini",
+            "score": 5,
+            "reasons": [
+              "Supports python"
+            ],
+            "warnings": [],
+            "capabilities": {
+              "planning": 0.85,
+              "execution": 0.95,
+              "review": 0.8,
+              "contextWindow": 1000000,
+              "languages": [
+                "python",
+                "javascript",
+                "java"
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   "createdAt": "2025-09-13T22:38:38.000Z",
-  "updatedAt": "2025-09-13T23:10:55.469Z"
+  "updatedAt": "2025-09-14T07:03:27.862Z"
 }
