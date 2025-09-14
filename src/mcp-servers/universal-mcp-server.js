@@ -10,6 +10,7 @@ const WorkflowEngine = require('../workflow/workflow-engine.js');
 const { logger } = require('../utils/logger.js');
 const SessionManager = require('../utils/session-manager.js');
 const { GeminiChatManager } = require('../utils/gemini-chat-manager.js');
+const ExecutorManager = require('../executor/executor-manager.js');
 const { processMonitor } = require('../utils/process-monitor.js');
 
 class UniversalMCPServer {
@@ -17,7 +18,13 @@ class UniversalMCPServer {
     this.orchestrator = new MultiAgentOrchestrator({ executor: { type: 'gemini' } });
     this.workflowEngine = new WorkflowEngine(this.orchestrator);
     this.sessionManager = new SessionManager('lexical-mcp-main');
+
+    // Use ExecutorManager instead of direct GeminiChatManager
+    this.executorManager = new ExecutorManager();
+
+    // Keep geminiChatManager for backward compatibility (will remove in Phase 2)
     this.geminiChatManager = new GeminiChatManager(this.sessionManager);
+
     this.server = new Server(
       {
         name: 'lexical-universal',
@@ -40,12 +47,21 @@ class UniversalMCPServer {
     return [
       {
         name: 'orchestrate',
-        description: 'Process request with intelligent agent and workflow selection. Can list agents/workflows with special prompts.',
+        description: 'Process request with configured executor and intelligent workflow selection.',
         inputSchema: {
           type: 'object',
           properties: {
             prompt: { type: 'string', description: 'The task or request to process' },
-            preferences: { type: 'object' }
+            preferences: {
+              type: 'object',
+              properties: {
+                workflow: {
+                  type: 'string',
+                  enum: ['auto', 'direct', 'plan-execute'],
+                  description: 'Workflow type (auto for automatic selection)'
+                }
+              }
+            }
           },
           required: ['prompt']
         }
@@ -238,9 +254,9 @@ class UniversalMCPServer {
         };
       }
 
-      const { agent = 'auto', workflow = 'auto', role = 'execute' } = preferences;
+      const { workflow = 'auto' } = preferences;
 
-      // Auto-select workflow if needed
+      // Auto-select workflow if needed (REAL logic, not fake)
       let selectedWorkflow = workflow;
       if (workflow === 'auto') {
         // Detect workflow based on prompt
@@ -251,38 +267,21 @@ class UniversalMCPServer {
         }
       }
 
-      // Auto-select agent if needed
-      let selectedAgent = agent;
-      if (agent === 'auto') {
-        // Detect best agent based on task
-        if (role === 'plan' || prompt.match(/review|improve/i)) {
-          selectedAgent = 'claude';
-        } else {
-          selectedAgent = 'gemini';
-        }
-      }
-
-      // Execute based on workflow
+      // Execute with REAL executor (no fake agent selection)
       let result;
       if (selectedWorkflow === 'plan-execute' && this.workflowEngine) {
         // Use workflow engine for complex workflows
         const workflowResult = await this.workflowEngine.execute(selectedWorkflow, prompt, {});
         result = workflowResult.steps.map(s => s.output).join('\n');
-      } else if (selectedAgent === 'gemini') {
-        // Use Gemini with context management
-        result = await this.geminiChatManager.executeWithContext(prompt);
-      } else if (this.orchestrator && this.orchestrator.executeWithAgent) {
-        // Use orchestrator for other agents
-        result = await this.orchestrator.executeWithAgent(selectedAgent, prompt, { role });
       } else {
-        // Fallback to Gemini
-        result = await this.geminiChatManager.executeWithContext(prompt);
+        // Use ExecutorManager with configured executor
+        result = await this.executorManager.execute(prompt);
       }
 
       return {
         success: true,
         result: result,
-        agent: selectedAgent,
+        executor: this.executorManager.executorType, // REAL executor being used
         workflow: selectedWorkflow
       };
     } catch (error) {
