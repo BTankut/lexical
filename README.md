@@ -22,17 +22,32 @@ A powerful orchestration system that coordinates multiple LLM agents (Claude, Ge
 
 ## 🚀 Installation
 
+### Quick Setup (Automated)
 ```bash
 # Clone the repository
 git clone https://github.com/BTankut/lexical.git
 cd lexical
 
-# Install dependencies
+# Run automated setup
+./setup.sh
+```
+
+### Manual Setup
+```bash
+# Clone and install dependencies
+git clone https://github.com/BTankut/lexical.git
+cd lexical
 npm install
 
-# Configure MCP server for Claude Code
-claude mcp add /Users/btankut/Projects/Lexical-TUI-Claude
+# Configure MCP server (see SETUP.md for details)
+cp claude_code_config.template.json claude_code_config.json
+# Edit claude_code_config.json with your paths
+
+# Register with Claude Code
+claude mcp add $(pwd)
 ```
+
+📚 **For detailed setup instructions, see [SETUP.md](SETUP.md)**
 
 ## 💡 Quick Start
 
@@ -229,6 +244,11 @@ The system includes automatic process monitoring:
 
 ## 🐛 Troubleshooting
 
+### Setup Issues
+- **Path problems**: Check [SETUP.md](SETUP.md#troubleshooting) for detailed solutions
+- **Missing dependencies**: Run `npm install` again
+- **Config errors**: Compare your config with `claude_code_config.template.json`
+
 ### MCP Server Connection Issues
 ```bash
 # Check if server is running
@@ -236,12 +256,15 @@ ps aux | grep universal-mcp-server
 
 # Restart Claude Code connection
 claude mcp reconnect
+
+# View Claude logs
+tail -f ~/.claude/logs/*.log
 ```
 
 ### High CPU Usage
 ```bash
 # Check process monitor stats
-curl http://localhost:3000/stats  # If API endpoint enabled
+mcp__lexical-universal__get_process_stats
 
 # Manual cleanup
 pm2 restart lexical-universal
@@ -250,11 +273,14 @@ pm2 restart lexical-universal
 ### Context Loss
 ```bash
 # Sessions are automatically saved in ./sessions/
-ls -la sessions/lexical-mcp-main.json
+ls -la sessions/
 
-# Manual session recovery
-node -e "require('./src/utils/session-manager').loadSession()"
+# Use MCP tools to save/resume
+mcp__lexical-universal__save_chat_session
+mcp__lexical-universal__resume_chat_session
 ```
+
+For more troubleshooting tips, see [SETUP.md](SETUP.md#troubleshooting)
 
 ## 📝 Development
 

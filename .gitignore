@@ -53,3 +53,9 @@ temp/
 dist/
 build/
 out/
+
+# MCP Configuration (personal)
+claude_code_config.json
+
+# Session files (personal)
+sessions/

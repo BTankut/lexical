@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "lexical-universal": {
+      "command": "{{NODE_PATH}}",
+      "args": ["{{PROJECT_PATH}}/src/mcp-servers/universal-mcp-server.js"],
+      "cwd": "{{PROJECT_PATH}}",
+      "env": {
+        "GEMINI_API_KEY": "${GEMINI_API_KEY}",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "EXECUTOR_TYPE": "gemini",
+        "LOG_LEVEL": "info",
+        "PATH": "{{NODE_BIN_DIR}}:${PATH}"
+      }
+    }
+  }
+}
